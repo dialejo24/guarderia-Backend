@@ -1,14 +1,16 @@
 import express from "express";
 import { PORT, db } from "./config.js";
-import clientesRoute from "./routes/clientesRoute.js";
-import productosRoute from "./routes/productosRoute.js";
-import empleadosRoute from "./routes/empleadosRoute.js";
-import ventasRoute from "./routes/ventasRoute.js";
-import abonosRoute from "./routes/abonosRoute.js";
+import REmpleado from "./routes/REmpleado.js";
+import RRol from "./routes/RRol.js";
+import RSalario from "./routes/RSalario.js"
+import RSede from "./routes/RSede.js";
+import RContrato from "./routes/RContrato.js";
+import RHorario from "./routes/RHorario.js";
+import RPlan from "./routes/RPlan.js";
+import RClient from "./routes/RClient.js";
+import RInscripcion from "./routes/RInscripcion.js";
+import mongoose from "./mongoDB.js";
 import cors from "cors";
-import { mongodbURL } from "./config.js";
-import mongoose from "mongoose";
-import multer from "multer";
 
 const app = express();
 app.use(express.json());
@@ -26,15 +28,20 @@ app.get("/", (request, response) => {
   return response.status(234).send("it's working");
 });
 
-app.use("/cliente", clientesRoute);
-app.use("/producto", productosRoute);
-app.use("/empleado", empleadosRoute);
-app.use("/venta", ventasRoute);
-app.use("/abono", abonosRoute);
+
+app.use("/empleado", REmpleado);
+app.use("/rol", RRol);
+app.use("/salario", RSalario);
+app.use("/sede", RSede);
+app.use("/contrato", RContrato);
+app.use("/horario", RHorario);
+app.use("/plan", RPlan);
+app.use("/cliente", RClient);
+app.use("/inscripcion", RInscripcion);
 
 db.connect((error) => {
   if (error) {
-    console.log("there's an error");
+    console.log(error);
     return;
   }
 
@@ -44,62 +51,3 @@ db.connect((error) => {
 
   console.log("connected MYSQL");
 });
-
-
-//mongo connection
-mongoose
-  .connect(mongodbURL)
-  .then(() => {
-    console.log("app conected");
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-
-const imageSchema = new mongoose.Schema({
-    filename: String,
-    contentType: String,
-    imageBase64: String,
-    productoId: Number
-});
-
-const Image = mongoose.model('Image', imageSchema);
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-app.post('/productoImagen', upload.single('image'), async (request, response) => {
-    const img = request.file;
-    if (!img) {
-        return response.status(400).send('No file uploaded.');
-    }
-    console.log(img);
-    
-    const newImage = new Image({
-        filename: img.originalname,
-        contentType: img.mimetype,
-        imageBase64: img.buffer.toString('base64'),
-        productoId: request.body.id
-    });
-
-    try {
-        await newImage.save();
-        response.status(200).send(newImage._id);
-    } catch (err) {
-        response.status(500).send('Error saving image.');
-    }
-})
-
-app.get('/productoImagen/:id', async (request, response) => {
-    try {
-        const image = await Image.findOne({productoId: request.params.id});
-        if (!image) {
-            return response.status(404).send('Image not found.');
-        }
-
-        response.set('Content-Type', image.contentType);
-        response.send(Buffer.from(image.imageBase64, 'base64'));
-    } catch (err) {
-        response.status(500).send('Error retrieving image.');
-    }
-})
