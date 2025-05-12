@@ -89,3 +89,101 @@ export const registrar_nino = (data) => {
         }
     });
 };
+
+export const obtener_padres = () => {
+    return new Promise((resolve, reject) => {
+        try {
+            const sql = `SELECT * FROM persona`;
+            db.query(sql, async (error, results) => {
+                if (error) {
+                    resolve({
+                        success: false,
+                        body: {
+                            message: "Error al obtener los padres",
+                            error: error.message
+                        }
+                    });
+                    return;
+                }
+                const data = [];
+                for (let i = 0; i < results.length; i++) {
+                    const persona = results[i];
+                    const padre = await Mpadre.findOne({ numIdentidad: persona.numero_identificacion });
+                    if (padre) {
+                        const aditionalInfo = await MaditionalInformation.findOne({ numIdentidad: persona.numero_identificacion });
+                        
+                        data.push({
+                            ...persona,
+                            telefono: padre.telefono,
+                            direccion: padre.direccion,
+                            correoElectronico: padre.correoElectronico,
+                            tipoSangre: aditionalInfo?.tipoSangre || "",
+                            genero: aditionalInfo?.genero || "",
+                        });
+                    }
+                }
+                resolve({
+                    success: true,
+                    body: data
+                });
+            });
+        } catch (error) {
+            resolve({
+                success: false,
+                body: {
+                    message: "Error al obtener los padres",
+                    error: error
+                }
+            });
+        }
+    });
+};
+
+export const obtener_ninos = () => {
+    return new Promise((resolve, reject) => {
+        try {
+            const sql = `SELECT * FROM persona`;
+            db.query(sql, async (error, results) => {
+                if (error) {
+                    resolve({
+                        success: false,
+                        body: {
+                            message: "Error al obtener los niños",
+                            error: error.message
+                        }
+                    });
+                    return;
+                }
+                const data = [];
+                for (let i = 0; i < results.length; i++) {
+                    const persona = results[i];
+                    const nino = await Mnino.findOne({ numIdentidad: persona.numero_identificacion });
+                    if (nino) {
+                        const aditionalInfo = await MaditionalInformation.findOne({ numIdentidad: persona.numero_identificacion });
+                        
+                        data.push({
+                            ...persona,
+                            enfermedades: nino.enfermedades,
+                            cuidadosEspeciales: nino.cuidadosEspeciales,
+                            acudiente: nino.acudiente,
+                            tipoSangre: aditionalInfo?.tipoSangre || "",
+                            genero: aditionalInfo?.genero || "",
+                        });
+                    }
+                }
+                resolve({
+                    success: true,
+                    body: data
+                });
+            });
+        } catch (error) {
+            resolve({
+                success: false,
+                body: {
+                    message: "Error al obtener los niños",
+                    error: error
+                }
+            });
+        }
+    });
+};

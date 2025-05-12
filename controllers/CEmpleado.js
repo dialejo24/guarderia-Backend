@@ -70,3 +70,89 @@ export const registrarEmpleado = (data, response) => {
         response.status(200).json(res);
     }
 };
+
+export const obtenerEmpleados = (request, response) => {
+    try {
+        const sql = `SELECT * FROM empleadosInfo`;
+        db.query(sql, async (error, results) => {
+            let res = {};
+            if (error) {
+                res = {
+                    success: false,
+                    body: {
+                        message: "Error al obtener los empleados",
+                        error: error.message,
+                    },
+                };
+                response.status(200).json(res);
+            } else {
+                for (let i = 0; i < results.length; i++) {
+                    const empleado = results[i];
+                    const personal = await MaditionalInformation.find({
+                        numIdentidad: empleado.numero_identificacion
+                    });
+                    
+                    if (personal.length > 0) {
+                        empleado.tipoSangre = personal[0].tipoSangre;
+                        empleado.genero = personal[0].genero;
+                    }
+                    results[i] = empleado;
+                }
+                res = {
+                    success: true,
+                    body: results,
+                };
+                response.status(200).json(res);
+            }
+        });
+    }
+    catch (error) {
+        const res = {
+            success: false,
+            body: {
+                message: "Error al obtener los empleados",
+                error: error.message,
+            },
+        };
+        response.status(200).json(res);
+    }
+};
+
+export const actualizarEmpleado = (data, response) => {
+    const { numIdentidad, idRol } = data;
+    try {
+        let sql = `CALL update_empleado(?, ?)`;
+        const userData = [
+            numIdentidad,
+            idRol
+        ];
+        db.query(sql, userData, async (error, results) => {
+            let res = {};
+            if (error) {
+                res = {
+                    success: false,
+                    body: {
+                        message: "Error al actualizar el empleado",
+                        error: error.message,
+                    },
+                };
+                response.status(200).json(res);
+                return;
+            }
+            res = {
+                success: true,
+                body: results,
+            };
+            response.status(200).json(res);
+        });
+    } catch (error) {
+        const res = {
+            success: false,
+            body: {
+                message: "Error al actualizar el empleado",
+                error: error.message,
+            },
+        };
+        response.status(200).json(res);
+    }
+};

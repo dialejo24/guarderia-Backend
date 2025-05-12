@@ -9,6 +9,8 @@ import RHorario from "./routes/RHorario.js";
 import RPlan from "./routes/RPlan.js";
 import RClient from "./routes/RClient.js";
 import RInscripcion from "./routes/RInscripcion.js";
+import RServicio from "./routes/RServicio.js";
+import RFactura from "./routes/RFactura.js";
 import mongoose from "./mongoDB.js";
 import cors from "cors";
 
@@ -38,6 +40,8 @@ app.use("/horario", RHorario);
 app.use("/plan", RPlan);
 app.use("/cliente", RClient);
 app.use("/inscripcion", RInscripcion);
+app.use("/servicio", RServicio);
+app.use("/factura", RFactura);
 
 db.connect((error) => {
   if (error) {
