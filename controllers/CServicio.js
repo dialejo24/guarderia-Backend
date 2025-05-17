@@ -2,12 +2,10 @@ import { db } from "../config.js";
 
 export const crear_servicio = (data) => {
     return new Promise((resolve, reject) => {
-        const { idInscripcion, idSede, fechaInicio, fechaFin, recomendaciones,
-            nombre, valor, descripcion } = data;
+        const { idInscripcion, idSede, fechaInicio, fechaFin } = data;
         try {
-            const sql = `CALL crear_servicio(?, ?, ?, ?, ?, ?, ?, ?)`;
-            db.query(sql, [fechaInicio, fechaFin, recomendaciones, 
-                idInscripcion, idSede, nombre, valor, descripcion], (error, results) => {
+            const sql = `CALL crear_servicio(?, ?, ?, ?)`;
+            db.query(sql, [fechaInicio, fechaFin, idSede, idInscripcion], (error, results) => {
                 if (error) {
                     resolve({
                         success: false,
@@ -52,7 +50,7 @@ export const obtener_servicios = () => {
                 }
                 resolve({
                     success: true,
-                    body: results[0]
+                    body: results
                 });
             });
         } catch (error) {
@@ -70,12 +68,10 @@ export const obtener_servicios = () => {
 
 export const actualizar_servicio = (data) => {
     return new Promise((resolve, reject) => {
-        const { idServicio, idServicioAdicion, idAdicion, fechaFin, recomendaciones,
-            nombre, valor, descripcion } = data;
+        const { fechaInicio, fechaFin, idServicio } = data;
         try {
-            const sql = `CALL update_servicio(?, ?, ?, ?, ?, ?, ?, ?)`;
-            db.query(sql, [idServicio, idServicioAdicion, idAdicion, fechaFin, recomendaciones,
-                nombre, valor, descripcion], (error, results) => {
+            const sql = 'CALL actualizar_servicio(?,?,?)';
+            db.query(sql, [idServicio, fechaInicio, fechaFin], (error, results) => {
                 if (error) {
                     resolve({
                         success: false,
@@ -90,7 +86,7 @@ export const actualizar_servicio = (data) => {
                     success: true,
                     body: results
                 });
-            });
+            })
         } catch (error) {
             resolve({
                 success: false,
@@ -106,7 +102,7 @@ export const actualizar_servicio = (data) => {
 export const eliminar_servicio = (idServicio) => {
     return new Promise((resolve, reject) => {
         try {
-            const sql = `CALL delete_adicion(?)`;
+            const sql = `CALL eliminar_servicio(?)`;
             db.query(sql, [idServicio], (error, results) => {
                 if (error) {
                     resolve({

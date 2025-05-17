@@ -13,7 +13,9 @@ router.get("/obtener", async (req, res) => {
     res.status(200).json(response);
 });
 
-router.put("/actualizar", async (req, res) => {
+router.put("/actualizar/:id", async (req, res) => {
+    const { id } = req.params;
+    req.body.idServicio = id;
     const response = await actualizar_servicio(req.body);
     res.status(200).json(response);
 });

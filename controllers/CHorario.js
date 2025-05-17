@@ -50,7 +50,7 @@ export const obtener_horarios = () => {
                 }
                 resolve({
                     success: true,
-                    body: results[0]
+                    body: results
                 });
             })
         } catch (error) {

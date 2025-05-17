@@ -17,7 +17,7 @@ export const obtener_facturas = () => {
                 }
                 resolve({
                     success: true,
-                    body: results[0]
+                    body: results
                 });
             });
         } catch (error) {

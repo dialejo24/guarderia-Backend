@@ -15,7 +15,7 @@ export const crearRol = (data, response) => {
                 });
                 return;
             }
-            
+            console.log(results);
             response.status(200).json({
                 success: true,
                 body: results,

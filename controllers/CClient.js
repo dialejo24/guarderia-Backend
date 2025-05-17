@@ -32,7 +32,12 @@ export const registrar_padre = (data) => {
                     correoElectronico: correo,
                 });
                 await padre.save();
-
+                resolve({
+                    success: true,
+                    body: {
+                        message: "padre creado exitosamente"
+                    }
+                })
             });
 
         } catch (error) {
@@ -77,6 +82,12 @@ export const registrar_nino = (data) => {
                     numIdentidad: identificacion,
                 });
                 await nino.save();
+                resolve({
+                    success: true,
+                    body: {
+                        message: "Niño creado exitosamente"
+                    }
+                })
             });
         } catch (error) {
             resolve({

@@ -11,6 +11,7 @@ import RClient from "./routes/RClient.js";
 import RInscripcion from "./routes/RInscripcion.js";
 import RServicio from "./routes/RServicio.js";
 import RFactura from "./routes/RFactura.js";
+import RAdicion from "./routes/RAdicion.js";
 import mongoose from "./mongoDB.js";
 import cors from "cors";
 
@@ -18,7 +19,10 @@ const app = express();
 app.use(express.json());
 
 
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:3000"],
+    credentials: true,
+  }));
 // app.use(cors({
 //     origin: 'http://localhost:3000',
 //     methods: ['GET', 'POST', 'DELETE', 'PUT'],
@@ -42,6 +46,7 @@ app.use("/cliente", RClient);
 app.use("/inscripcion", RInscripcion);
 app.use("/servicio", RServicio);
 app.use("/factura", RFactura);
+app.use("/adicion", RAdicion);
 
 db.connect((error) => {
   if (error) {
